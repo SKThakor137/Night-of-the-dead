@@ -1,0 +1,79 @@
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-family: system-ui, sans-serif; }
+#game-root { position: fixed; inset: 0; }
+#game-root canvas { display: block; width: 100%; height: 100%; }
+
+/* ---------- HUD ---------- */
+.overlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.65); color: #ddd; text-align: center; gap: 12px; user-select: none; }
+.overlay h1 { margin: 0; letter-spacing: 6px; color: #b22; font-size: 44px; }
+.overlay .big { font-size: 20px; }
+.overlay .help { opacity: .7; font-size: 14px; line-height: 1.8; }
+
+.crosshair { position: fixed; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
+.crosshair i { position: absolute; background: rgba(255,255,255,.9); box-shadow: 0 0 0 1px rgba(0,0,0,.55); }
+.crosshair i:nth-child(1) { width: 2px; height: 8px; left: -1px; top: -16px; }
+.crosshair i:nth-child(2) { width: 2px; height: 8px; left: -1px; top: 8px; }
+.crosshair i:nth-child(3) { width: 8px; height: 2px; left: -16px; top: -1px; }
+.crosshair i:nth-child(4) { width: 8px; height: 2px; left: 8px; top: -1px; }
+.hitmarker { position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; opacity: 0; animation: hit .25s ease-out;
+  background:
+    linear-gradient(45deg, transparent 45%, #fff 45% 55%, transparent 55%),
+    linear-gradient(-45deg, transparent 45%, #fff 45% 55%, transparent 55%); }
+.hitmarker.kill { filter: drop-shadow(0 0 2px red) hue-rotate(-40deg); }
+@keyframes hit { 0% { opacity: 1; transform: scale(.7); } 100% { opacity: 0; transform: scale(1.4); } }
+
+.ammo { position: fixed; right: 28px; bottom: 24px; text-align: right; color: #eee; pointer-events: none;
+  text-shadow: 0 0 6px #000; font-family: ui-monospace, Menlo, monospace; }
+.ammo-name { font-size: 13px; letter-spacing: 3px; opacity: .7; }
+.ammo-count { font-size: 44px; font-weight: 700; line-height: 1; }
+.ammo-count small { font-size: 22px; opacity: .6; font-weight: 400; }
+.ammo-count .empty { color: #e33; }
+.reloading { color: #ffb347; font-size: 14px; letter-spacing: 2px; margin-top: 4px; }
+
+.slots { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); display: flex; gap: 10px; pointer-events: none;
+  font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+.slots span { padding: 4px 10px; background: rgba(0,0,0,.45); color: #999; border: 1px solid #333; }
+.slots span.on { color: #fff; border-color: #c33; }
+
+/* ---------- Phase 3: health, damage, death ---------- */
+.health { position: fixed; left: 24px; top: 20px; width: 240px; pointer-events: none; color: #eee;
+  font-family: ui-monospace, Menlo, monospace; text-shadow: 0 0 6px #000; }
+.health-label { font-size: 12px; letter-spacing: 3px; opacity: .8; margin-bottom: 4px; }
+.health-label b { font-size: 18px; margin-left: 6px; }
+.health-bar { height: 10px; background: rgba(0,0,0,.55); border: 1px solid #444; }
+.health-bar > div { height: 100%; background: linear-gradient(90deg, #a11, #e44); transition: width .15s; }
+.topbar { position: fixed; top: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 28px; pointer-events: none;
+  color: #ddd; font-family: ui-monospace, Menlo, monospace; font-size: 13px; letter-spacing: 3px; text-shadow: 0 0 6px #000; }
+.topbar b { font-size: 20px; margin-left: 6px; color: #fff; }
+.dmg-flash { position: fixed; inset: 0; pointer-events: none; animation: dmg .45s ease-out forwards;
+  background: radial-gradient(ellipse at center, rgba(180,0,0,0) 35%, rgba(200,0,0,.65) 100%); }
+@keyframes dmg { from { opacity: 1; } to { opacity: 0; } }
+.low-hp { position: fixed; inset: 0; pointer-events: none; transition: opacity .3s;
+  box-shadow: inset 0 0 160px 40px rgba(160,0,0,.8); }
+.overlay.dead { background: rgba(40,0,0,.75); }
+.overlay.dead h1 { font-size: 64px; color: #d22; }
+.btn { background: #b22; color: #fff; border: 0; padding: 14px 40px; font-size: 18px; letter-spacing: 4px; cursor: pointer; }
+.btn:hover { background: #d33; }
+
+/* ---------- Phase 4: waves, score, game over ---------- */
+.banner { position: fixed; top: 22%; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none;
+  color: #eee; text-shadow: 0 0 12px #000; animation: banner 3.5s ease-out forwards; font-family: ui-monospace, Menlo, monospace; }
+.banner h2 { margin: 0; font-size: 46px; letter-spacing: 8px; color: #d33; }
+.banner div { margin-top: 6px; letter-spacing: 4px; font-size: 14px; opacity: .85; }
+@keyframes banner { 0% { opacity: 0; transform: translateX(-50%) scale(1.2); } 10% { opacity: 1; transform: translateX(-50%) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; } }
+.stats { display: flex; gap: 40px; font-family: ui-monospace, Menlo, monospace; letter-spacing: 3px; font-size: 14px; margin: 8px 0 14px; }
+.stats b { display: block; font-size: 38px; color: #fff; letter-spacing: 1px; margin-top: 4px; }
+
+/* ---------- Phase 5: knife crosshair, flashlight indicator ---------- */
+.crosshair.melee i { display: none; }
+.crosshair.melee::after { content: ''; position: absolute; left: -2px; top: -2px; width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(255,255,255,.9); box-shadow: 0 0 0 1px rgba(0,0,0,.6); }
+.torch { position: fixed; left: 24px; bottom: 24px; pointer-events: none; color: #aaa; font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px; letter-spacing: 2px; text-shadow: 0 0 6px #000; }
+.torch b { color: #777; margin-left: 4px; }
+.torch b.on { color: #ffd98a; }
+
+/* ---------- Phase 6: polish ---------- */
+.vignette { position: fixed; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+.fps { position: fixed; right: 14px; top: 12px; color: #7f7; font-family: ui-monospace, Menlo, monospace; font-size: 12px; pointer-events: none; }
